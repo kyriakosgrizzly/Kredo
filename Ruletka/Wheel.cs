@@ -58,6 +58,7 @@ namespace ruletka
                     win = "R";
                 }
             }
+            if (num == 0) win = "G";
 
             Console.WriteLine($"Winning number: {num} color: {win}");
             if (win == bet) return true;
