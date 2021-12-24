@@ -1,17 +1,66 @@
 ﻿using System;
 using ruletka;
+using System.Collections.Generic;
 class TestClass
 {
     static public Random random = new Random();
     static void Main(string[] args)
     {
-        Account User = new Account();
+        
+        var Users = new List<Account>();
+        Console.WriteLine("How many players");
+        int PlayerCount;
+        while (!int.TryParse(Console.ReadLine(),out PlayerCount))
+        {
+            Console.WriteLine("wrong input");
+        }
+        Console.WriteLine("enter names");
+        for(int i = 0;i < PlayerCount; i++)
+        {
+            Users.Add(new Account());
+            Users[i].Name = Console.ReadLine();
+        }
         Roullete roullete = new Roullete();
+
+
     //Label
     start:
+        for (int i = 0; i < PlayerCount; i++)
+        {
+            Input(Users[i]);
+        }
+        roullete.SpinTheWheel();
+        foreach(Account user in Users)
+        {
+            user.AfterBet(roullete.CheckForWin(user.Choice, user.Type));
+            Console.WriteLine(user.Balance);
+        }
+        roullete.WinningNumCol();
+       
+
     //Label
+    ExitOrContinue:
+    Console.WriteLine("Do you wish to continue the game? answer by typing Y or N");
+    string finish = Console.ReadLine();
+    if (finish == "Y")
+    {
+        goto start;
+    }
+    else if(finish == "N")
+    {
+            
+    }
+    else
+    {
+        goto ExitOrContinue;
+    }
+          
+    }
+    static public void Input(object user)
+    {
+        Account User = user as Account;
     Type:
-        Console.WriteLine($"Current Balance {User.Balance}");
+        Console.WriteLine($"{User.Name} Current Balance {User.Balance}");
         Console.WriteLine("choose type of bet Color or Number,by writing C or N");
         string? BetType = Console.ReadLine();
         if (!(BetType == "C" || BetType == "N"))
@@ -54,8 +103,11 @@ class TestClass
                 Console.WriteLine("wrong input");
                 goto Color;
             }
-            roullete.SpinTheWheel();
-            User.AfterBet(roullete.CheckForWin(color, User.Type));
+            else
+            {
+                User.Choice = color;
+            }
+            
         }
         else if (BetType == "N")
         {
@@ -69,27 +121,15 @@ class TestClass
                 Console.WriteLine("wrong input");
                 goto Number;
             }
-            roullete.SpinTheWheel();
-            User.AfterBet(roullete.CheckForWin(BetNumber.ToString(), User.Type));
-        }
-
-    Console.WriteLine(User.Balance);
-    //Label
-    ExitOrContinue:
-    Console.WriteLine("Do you wish to continue the game? answer by typing Y or N");
-    string finish = Console.ReadLine();
-    if (finish == "Y")
-    {
-        goto start;
-    }
-    else if(finish == "N")
-    {
+            else if(BetNumber > 36 || BetNumber < 0)
+            {
+                Console.WriteLine("Out of bound");
+                goto Number;
+            }
+            else {
+                User.Choice = BetNumber.ToString();
+            }
             
-    }
-    else
-    {
-        goto ExitOrContinue;
-    }
-          
+        }
     }
 }

@@ -8,9 +8,12 @@ namespace ruletka
 {
     public class Account
     {
+        public string Name { get; set; }
         public Double Balance { get; set; }
         public Double Bet { get; set; }
         public bool Type { get; set; }
+
+        public string Choice { get; set; }
         public Account()
         {
             Balance = 1000;

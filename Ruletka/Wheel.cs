@@ -12,6 +12,8 @@ namespace ruletka
         static public Random rand = new Random();
 
         public int WinNum { get; set; }
+        
+        public string WinCol { get; set; }
 
         public void SpinTheWheel()
         {
@@ -59,10 +61,13 @@ namespace ruletka
                 }
             }
             if (num == 0) win = "G";
-
-            Console.WriteLine($"Winning number: {num} color: {win}");
+            WinCol = win;
             if (win == bet) return true;
             return false;
+        }
+        public void WinningNumCol()
+        {
+            Console.WriteLine($"Winning number is {WinNum} and Color {WinCol}");
         }
         public bool CheckForNumber(int number, int RandNum)
         {
