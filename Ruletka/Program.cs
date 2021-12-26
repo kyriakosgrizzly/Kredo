@@ -23,111 +23,110 @@ class TestClass
         Roullete roullete = new Roullete();
 
 
-    //Label
-    start:
-        for (int i = 0; i < PlayerCount; i++)
+        //start the game
+        bool start = true;
+        while (start)
         {
-            Input(Users[i]);
-        }
-        roullete.SpinTheWheel();
-        foreach(Account user in Users)
-        {
-            user.AfterBet(roullete.CheckForWin(user.Choice, user.Type));
-            Console.WriteLine(user.Balance);
-        }
-        roullete.WinningNumCol();
-       
+            for (int i = 0; i < PlayerCount; i++)
+            {
+                Input(Users[i]);
+            }
+            roullete.SpinTheWheel();
+            foreach (Account user in Users)
+            {
+                user.AfterBet(roullete.CheckForWin(user.Choice, user.Type));
+                Console.WriteLine(user.Balance);
+            }
+            roullete.WinningNumCol();
 
-    //Label
-    ExitOrContinue:
-    Console.WriteLine("Do you wish to continue the game? answer by typing Y or N");
-    string finish = Console.ReadLine();
-    if (finish == "Y")
-    {
-        goto start;
-    }
-    else if(finish == "N")
-    {
-            
-    }
-    else
-    {
-        goto ExitOrContinue;
-    }
+
+            //check for exit
+            while (true)
+            {
+                Console.WriteLine("Do you wish to continue the game? answer by typing Y or N");
+                string finish = Console.ReadLine();
+                if (finish == "Y")
+                {
+                    break;
+                }
+                else if (finish == "N")
+                {
+                    start = false;
+                    break;
+                }
+            }
+        }
           
     }
-    static public void Input(object user)
+    static void Input(object user)
     {
         Account User = user as Account;
-    Type:
+        string BetType = "";
         Console.WriteLine($"{User.Name} Current Balance {User.Balance}");
-        Console.WriteLine("choose type of bet Color or Number,by writing C or N");
-        string? BetType = Console.ReadLine();
-        if (!(BetType == "C" || BetType == "N"))
+        while (!(BetType == "C" || BetType == "N"))
         {
-            goto Type;
+            Console.WriteLine("choose type of bet Color or Number,by writing C or N");
+            BetType = Console.ReadLine();
         }
         Console.WriteLine("Choose bet amount");
-    //Label
-    Bet:
-        bool success = double.TryParse(Console.ReadLine(), out double bet);
-        if (!success)
+        //Label
+        double bet;
+        bool success;
+        while (true)
         {
-            Console.WriteLine("Wrong input");
-            goto Bet;
+            success = double.TryParse(Console.ReadLine(), out bet);
+            if (!success)
+            {
+                Console.WriteLine("Wrong input");
+            }
+            else if (!(bet < User.Balance))
+            {
+                Console.WriteLine("Not enough balance");
+            }
+            else if (!(bet <= 60))
+            {
+                Console.WriteLine("Max bet is 60");
+            }
+            else
+            {
+                break;
+            }
         }
-        if (!(bet < User.Balance))
-        {
-            Console.WriteLine("Not enough balance");
-            goto Bet;
-
-        }
-        if (!(bet <= 60))
-        {
-            Console.WriteLine("Max bet is 60");
-            goto Bet;
-
-        }
+       
         // assign user bet
         User.Bet = bet;
         if (BetType == "C")
         {
             User.Type = true;
             Console.WriteLine("Enter Color: R or B");
-        //Label
-        Color:
+            string? color = "";
+            while (!(color == "R" || color == "B")){
+                color = Console.ReadLine();
+            }
+            User.Choice = color;
 
-            string? color = Console.ReadLine();
-            if (!(color == "R" || color == "B"))
-            {
-                Console.WriteLine("wrong input");
-                goto Color;
-            }
-            else
-            {
-                User.Choice = color;
-            }
-            
         }
         else if (BetType == "N")
         {
             User.Type = false;
             Console.WriteLine("Enter number:");
-        //Label
-        Number:
-            success = int.TryParse(Console.ReadLine(), out int BetNumber);
-            if (!success)
+
+            while (true)
             {
-                Console.WriteLine("wrong input");
-                goto Number;
-            }
-            else if(BetNumber > 36 || BetNumber < 0)
-            {
-                Console.WriteLine("Out of bound");
-                goto Number;
-            }
-            else {
-                User.Choice = BetNumber.ToString();
+                success = int.TryParse(Console.ReadLine(), out int BetNumber);
+                if (!success)
+                {
+                    Console.WriteLine("wrong input");
+                }
+                else if(BetNumber > 36 || BetNumber < 0)
+                {
+                    Console.WriteLine("Out of bound");
+                }
+                else
+                {
+                    User.Choice = BetNumber.ToString();
+                    break;
+                }
             }
             
         }
